@@ -78,7 +78,7 @@ def handle_bitrix24():
 
     with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
         f.write('data should appears below \n')
-        f.write(str(request.__dict__))
+        f.write(str(request.form))
 
         # f.write(jsonify(data).get_data(as_text=True))
 
