@@ -14,11 +14,12 @@ from fast_bitrix24 import Bitrix
 
 import yaml
 
-
+from pathlib import Path
+THIS_FOLDER = Path(__file__).parent.resolve()
 
 app = Flask(__name__)
 
-with open("db_config.yaml", "r") as yamlfile:
+with open(THIS_FOLDER / "db_config.yaml", "r") as yamlfile:
     cdata = yaml.load(yamlfile, Loader=yaml.FullLoader)
 
 mysql = MySQL()
@@ -31,10 +32,6 @@ mysql.init_app(app)
 app = Flask(__name__)
 
 cache = {}
-
-from pathlib import Path
-THIS_FOLDER = Path(__file__).parent.resolve()
-# my_file = THIS_FOLDER / 'credentials.json'
 
 CREDENTIALS_FILE = THIS_FOLDER / 'credentials.json'
 
