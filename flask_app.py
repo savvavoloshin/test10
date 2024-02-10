@@ -8,6 +8,18 @@ import httplib2
 import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 
+from flaskext.mysql import MySQL
+
+from fast_bitrix24 import Bitrix
+
+app = Flask(__name__)
+mysql = MySQL()
+app.config['MYSQL_DATABASE_USER'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = '181483331264'
+app.config['MYSQL_DATABASE_DB'] = 'mysql'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+mysql.init_app(app)
+
 app = Flask(__name__)
 
 cache = {}
@@ -66,7 +78,31 @@ def hello_world():
     with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
         f.write('log file should be initialized\n')
     
-    return 'Hello from Flask! Mydir: ' + "%s" % THIS_FOLDER
+    conn = mysql.connect()
+    cursor =conn.cursor()
+
+    create_table_stmt = """
+CREATE TABLE IF NOT EXISTS `tblsample` (
+
+  `id` int(11) NOT NULL auto_increment, 
+  `name1` varchar(100) NOT NULL default '',
+  `name2` varchar(100) NOT NULL default '',
+  `phone` varchar(100) NOT NULL default '',
+  `comments` varchar(100) NOT NULL default '',
+   PRIMARY KEY  (`id`)
+);
+"""
+
+    cursor.execute(create_table_stmt)
+    data = cursor.fetchone()
+
+    insert_some_values_stmt = "INSERT INTO tblsample (name1, name2, phone, comments) VALUES (%s, %s, %s, %s)"
+    values = ("John", "Highway", "+7 960 257 8295", "no comments")
+    cursor.execute(insert_some_values_stmt, values)
+
+    conn.commit()
+    
+    return 'Hello from Flask! Mydir: ' + "%s" % THIS_FOLDER + "%s " % str(data)
 
 @app.route('/bitrix24', methods=['POST'])
 def handle_bitrix24():
@@ -81,6 +117,25 @@ def handle_bitrix24():
         f.write(str(request.form))
 
         # f.write(jsonify(data).get_data(as_text=True))
+    # замените на ваш вебхук для доступа к Bitrix24
+    webhook = "https://b24-onzqts.bitrix24.ru/rest/1/glt6iy0bi3ihay6s/"
+    b = Bitrix(webhook)
+
+    # список сделок в работе, включая пользовательские поля
+    deals = b.get_all(
+        'crm.deal.list',
+        params={
+            'select': ['*', 'UF_*'],
+            'filter': {'CLOSED': 'N'}
+    })
+
+    contacts = b.get_by_ID(
+    'crm.deal.contact.items.get',
+    [d['ID'] for d in deals])
+
+    with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
+        f.write('contacts data should appears below \n')
+        f.write(str(contacts))
 
 
     values = [
