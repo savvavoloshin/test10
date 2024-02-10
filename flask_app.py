@@ -8,14 +8,15 @@ import httplib2
 import apiclient.discovery
 from oauth2client.service_account import ServiceAccountCredentials
 
-import os
-
 app = Flask(__name__)
 
 cache = {}
 
-my_dir = os.path.dirname(__file__)
-CREDENTIALS_FILE = os.path.join(my_dir, 'credentials.json')
+from pathlib import Path
+THIS_FOLDER = Path(__file__).parent.resolve()
+# my_file = THIS_FOLDER / 'credentials.json'
+
+CREDENTIALS_FILE = THIS_FOLDER / 'credentials.json'
 
 # Читаем ключи из файла
 credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'])
@@ -61,13 +62,17 @@ def myinit():
 
 @app.route('/')
 def hello_world():
-    return 'Hello from Flask! Mydir: ' + "%s" % my_dir
+
+    with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
+        f.write('log file should be initialized\n')
+    
+    return 'Hello from Flask! Mydir: ' + "%s" % THIS_FOLDER
 
 @app.route('/bitrix24', methods=['POST'])
 def handle_bitrix24():
     data=request.json
 
-    with open(os.path.join(my_dir, 'tmp.log'), 'a+') as f:
+    with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
         f.write('data should appears below \n')
         f.write(jsonify(data).get_data(as_text=True))
 
