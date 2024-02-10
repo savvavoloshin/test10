@@ -12,12 +12,20 @@ from flaskext.mysql import MySQL
 
 from fast_bitrix24 import Bitrix
 
+import yaml
+
+
+
 app = Flask(__name__)
+
+with open("db_config.yaml", "r") as yamlfile:
+    cdata = yaml.load(yamlfile, Loader=yaml.FullLoader)
+
 mysql = MySQL()
-app.config['MYSQL_DATABASE_USER'] = 'root'
-app.config['MYSQL_DATABASE_PASSWORD'] = '181483331264'
-app.config['MYSQL_DATABASE_DB'] = 'mysql'
-app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+app.config['MYSQL_DATABASE_USER'] = cdata[0]['Details']['MYSQL_DATABASE_USER']
+app.config['MYSQL_DATABASE_PASSWORD'] = cdata[0]['Details']['MYSQL_DATABASE_PASSWORD']
+app.config['MYSQL_DATABASE_DB'] = cdata[0]['Details']['MYSQL_DATABASE_DB']
+app.config['MYSQL_DATABASE_HOST'] = cdata[0]['Details']['MYSQL_DATABASE_HOST']
 mysql.init_app(app)
 
 app = Flask(__name__)
