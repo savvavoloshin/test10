@@ -61,13 +61,13 @@ def myinit():
 
 @app.route('/')
 def hello_world():
-    return 'Hello from Flask!'
+    return 'Hello from Flask! Mydir: ' + "%s" % my_dir
 
 @app.route('/bitrix24', methods=['POST'])
 def handle_bitrix24():
     data=request.json
 
-    with open(os.path.join(my_dir, 'tmp.log'), 'w+') as f:
+    with open(os.path.join(my_dir, 'tmp.log'), 'a+') as f:
         f.write('data should appears below \n')
         f.write(jsonify(data).get_data(as_text=True))
 
