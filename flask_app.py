@@ -78,7 +78,9 @@ def handle_bitrix24():
 
     with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
         f.write('data should appears below \n')
-        f.write(jsonify(data).get_data(as_text=True))
+        f.write(str(request.__dict__))
+
+        # f.write(jsonify(data).get_data(as_text=True))
 
 
     values = [
@@ -90,7 +92,7 @@ def handle_bitrix24():
     results = service.spreadsheets().values().append(
         spreadsheetId=spreadsheetId, range="Лист номер один!B2:D5", valueInputOption="RAW", body=body).execute()
     
-    return jsonify(data)
+    return jsonify({"code":200})
 
 
 if __name__ == '__main__':
