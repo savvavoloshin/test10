@@ -68,8 +68,8 @@ def handle_bitrix24():
     data=request.json
 
     with open(os.path.join(my_dir, 'tmp.log'), 'w+') as f:
-        f.write('data should appears below ')
-        f.write(jsonify(data))
+        f.write('data should appears below \n')
+        f.write(jsonify(data).get_data(as_text=True))
 
 
     values = [
