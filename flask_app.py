@@ -63,7 +63,9 @@ def hello_world():
 @app.route('/bitrix24', methods=['POST'])
 def handle_bitrix24():
     data=request.json
-    print(data["Id"])
+    with open("tmp.log", 'w+') as f:
+        f.write(jsonify(data))
+
 
     values = [
         [1,2,3,4,5,6,7,8,9]
