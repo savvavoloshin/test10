@@ -74,7 +74,7 @@ def handle_bitrix24():
     with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
         f.write('handle_bitrix24 \n')
 
-    data=request.json
+    # data=request.json
 
     with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
         f.write('data should appears below \n')
