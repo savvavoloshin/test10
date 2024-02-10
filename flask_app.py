@@ -66,7 +66,8 @@ def hello_world():
 @app.route('/bitrix24', methods=['POST'])
 def handle_bitrix24():
     data=request.json
-    with open("tmp.log", 'w+') as f:
+
+    with open(os.path.join(my_dir, 'tmp.log'), 'w+') as f:
         f.write('data should appears below ')
         f.write(jsonify(data))
 
