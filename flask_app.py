@@ -6,13 +6,16 @@ from flask import Flask, request, jsonify
 
 import httplib2 
 import apiclient.discovery
-from oauth2client.service_account import ServiceAccountCredentials	
+from oauth2client.service_account import ServiceAccountCredentials
+
+import os
 
 app = Flask(__name__)
 
 cache = {}
 
-CREDENTIALS_FILE = 'credentials.json'  # Имя файла с закрытым ключом, вы должны подставить свое
+my_dir = os.path.dirname(__file__)
+CREDENTIALS_FILE = os.path.join(my_dir, 'credentials.json')
 
 # Читаем ключи из файла
 credentials = ServiceAccountCredentials.from_json_keyfile_name(CREDENTIALS_FILE, ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive'])
