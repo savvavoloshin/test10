@@ -67,6 +67,7 @@ def hello_world():
 def handle_bitrix24():
     data=request.json
     with open("tmp.log", 'w+') as f:
+        f.write('data should appears below ')
         f.write(jsonify(data))
 
 
