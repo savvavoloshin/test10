@@ -11,5 +11,6 @@ pip install fast_bitrix24
 1.1)
 pip install flask-mysql // на хостинге в бесплатном варианте доступен только mysql, поэтому mysql
 pip install pyyaml
+pip install flask[async] 
 
 2) данные собираюсь доставать через входящий "вебхук" для bitrix... С помощью вышеуказанного модуля fast_bitrix24

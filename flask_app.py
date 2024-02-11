@@ -11,7 +11,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 from flaskext.mysql import MySQL
 
-from fast_bitrix24 import Bitrix
+from fast_bitrix24 import BitrixAsync
 
 import yaml
 
@@ -75,7 +75,7 @@ spreadsheetId = spreadsheet['spreadsheetId'] # сохраняем идентиф
 # print('https://docs.google.com/spreadsheets/d/' + spreadsheetId
 
 webhook = "https://b24-onzqts.bitrix24.ru/rest/1/glt6iy0bi3ihay6s/"
-b = Bitrix(webhook)
+b = BitrixAsync(webhook)
 
 @app.route('/')
 def hello_world():
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `tblsample` (
     return 'Hello from Flask! Mydir: ' + "%s" % THIS_FOLDER + "%s " % str(data)
 
 @app.route('/bitrix24', methods=['POST'])
-def handle_bitrix24():
+async def handle_bitrix24():
 
     # data=request.json
 
@@ -123,7 +123,7 @@ def handle_bitrix24():
         except:
             deal_id = ''
 
-    deal = b.get_all(
+    deal = await b.get_all(
         'crm.deal.list',
         params={
             'select': ['ID', 'CONTACT_ID', 'COMMENTS'],
@@ -134,7 +134,7 @@ def handle_bitrix24():
         comments = deal[0]['COMMENTS']
         contact_id = deal[0]['CONTACT_ID']
 
-        contact = b.get_all(
+        contact = await b.get_all(
             'crm.contact.list',
             params={
                 'select': ['LAST_NAME', 'NAME', 'PHONE',],
