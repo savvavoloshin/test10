@@ -6,12 +6,13 @@ README.md
 pip install --upgrade google-api-python-client
 pip install oauth2client
 pip install google-auth-oauthlib
-pip install fast_bitrix24 * не прокатило
+ * не прокатило pip install fast_bitrix24
 pip install bitrix24-rest
 
 1.1)
-pip install flask-mysql // на хостинге в бесплатном варианте доступен только mysql, поэтому mysql
+ * не прокатило pip install flask-mysql // на хостинге в бесплатном варианте доступен только mysql, поэтому mysql
 pip install pyyaml
-pip install flask[async] 
+ * не прокатило pip install flask[async]
+pip install psycopg2-binary
 
 2) данные собираюсь доставать через входящий "вебхук" для bitrix... С помощью вышеуказанного модуля fast_bitrix24
