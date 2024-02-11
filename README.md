@@ -6,7 +6,8 @@ README.md
 pip install --upgrade google-api-python-client
 pip install oauth2client
 pip install google-auth-oauthlib
-pip install fast_bitrix24
+pip install fast_bitrix24 * не прокатило
+pip install bitrix24-rest
 
 1.1)
 pip install flask-mysql // на хостинге в бесплатном варианте доступен только mysql, поэтому mysql
