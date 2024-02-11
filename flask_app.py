@@ -72,11 +72,10 @@ spreadsheetId = spreadsheet['spreadsheetId'] # сохраняем идентиф
 #         ]
 #     }).execute()
 
-# print('https://docs.google.com/spreadsheets/d/' + spreadsheetId)
+# print('https://docs.google.com/spreadsheets/d/' + spreadsheetId
 
-def myinit():
-    global cache
-    cache['foo'] = 0
+webhook = "https://b24-onzqts.bitrix24.ru/rest/1/glt6iy0bi3ihay6s/"
+b = Bitrix(webhook)
 
 @app.route('/')
 def hello_world():
@@ -115,9 +114,43 @@ def handle_bitrix24():
 
     # data=request.json
 
-    with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
-        pprint('handle_bitrix24', f)
-        pprint(request.form, f)
+    deal_id = ''
+    try:
+        deal_id = request.form['data[FIELDS][ID]']
+    except:
+        try:
+            deal_id = request.form['param1']
+        except:
+            deal_id = ''
+
+    deal = b.get_all(
+        'crm.deal.list',
+        params={
+            'select': ['ID', 'CONTACT_ID', 'COMMENTS'],
+            'filter': {'ID': deal_id}
+    })
+
+    if len(deal) > 0:
+        comments = deal[0]['COMMENTS']
+        contact_id = deal[0]['CONTACT_ID']
+
+        contact = b.get_all(
+            'crm.contact.list',
+            params={
+                'select': ['LAST_NAME', 'NAME', 'PHONE',],
+                'filter': {'ID': '2'}
+        })
+
+        name1 = contact[0]['LAST_NAME']
+        name2 = contact[0]['NAME']
+        phone = contact[0]['PHONE'][0]['VALUE']
+
+        with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
+            pprint('handle_bitrix24', f)
+            pprint(request.form, f)
+    else:
+        with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
+            pprint('cant handle_bitrix24', f)
 
     values = [
         [1,2,3,4,5,6,7,8,9]
@@ -134,5 +167,4 @@ def handle_bitrix24():
 
 
 if __name__ == '__main__':
-    myinit()  # initialize by default
     app.run()
