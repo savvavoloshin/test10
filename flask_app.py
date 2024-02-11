@@ -4,6 +4,8 @@
 from flask import Flask, request, jsonify
 from pprint import pprint 
 
+import aiohttp
+import asyncio
 
 import httplib2 
 import apiclient.discovery
@@ -74,9 +76,6 @@ spreadsheetId = spreadsheet['spreadsheetId'] # сохраняем идентиф
 
 # print('https://docs.google.com/spreadsheets/d/' + spreadsheetId
 
-webhook = "https://b24-onzqts.bitrix24.ru/rest/1/glt6iy0bi3ihay6s/"
-b = BitrixAsync(webhook)
-
 @app.route('/')
 def hello_world():
 
@@ -123,34 +122,39 @@ async def handle_bitrix24():
         except:
             deal_id = ''
 
-    deal = await b.get_all(
-        'crm.deal.list',
-        params={
-            'select': ['ID', 'CONTACT_ID', 'COMMENTS'],
-            'filter': {'ID': deal_id}
-    })
+    connector = aiohttp.TCPConnector(ssl=False)
+    async with aiohttp.ClientSession(connector=connector) as client:
+        webhook = "https://b24-onzqts.bitrix24.ru/rest/1/glt6iy0bi3ihay6s/"
+        b = BitrixAsync(webhook, client=client)
 
-    if len(deal) > 0:
-        comments = deal[0]['COMMENTS']
-        contact_id = deal[0]['CONTACT_ID']
-
-        contact = await b.get_all(
-            'crm.contact.list',
+        deal = await b.get_all(
+            'crm.deal.list',
             params={
-                'select': ['LAST_NAME', 'NAME', 'PHONE',],
-                'filter': {'ID': '2'}
+                'select': ['ID', 'CONTACT_ID', 'COMMENTS'],
+                'filter': {'ID': deal_id}
         })
 
-        name1 = contact[0]['LAST_NAME']
-        name2 = contact[0]['NAME']
-        phone = contact[0]['PHONE'][0]['VALUE']
+        if len(deal) > 0:
+            comments = deal[0]['COMMENTS']
+            contact_id = deal[0]['CONTACT_ID']
 
-        with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
-            pprint('handle_bitrix24', f)
-            pprint(request.form, f)
-    else:
-        with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
-            pprint('cant handle_bitrix24', f)
+            contact = await b.get_all(
+                'crm.contact.list',
+                params={
+                    'select': ['LAST_NAME', 'NAME', 'PHONE',],
+                    'filter': {'ID': '2'}
+            })
+
+            name1 = contact[0]['LAST_NAME']
+            name2 = contact[0]['NAME']
+            phone = contact[0]['PHONE'][0]['VALUE']
+
+            with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
+                pprint('handle_bitrix24', f)
+                pprint(request.form, f)
+        else:
+            with open(THIS_FOLDER / 'tmp.log', 'a+') as f:
+                pprint('cant handle_bitrix24', f)
 
     values = [
         [1,2,3,4,5,6,7,8,9]
